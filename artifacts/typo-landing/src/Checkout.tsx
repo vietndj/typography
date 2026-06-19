@@ -25,10 +25,10 @@ const BONUSES = [
 ];
 
 const OBJECTIONS = [
-  { q: "Tôi chưa chắc mình có thời gian học không?", a: "Bạn không cần học liền. Tài liệu truy cập vĩnh viễn — đọc 15 phút/ngày trong 7 ngày là đủ thấy thay đổi. Không deadline, không áp lực." },
+  { q: "Tôi chưa chắc mình có thời gian học không?", a: "Bạn không cần học liền. Tài liệu truy cập vĩnh viễn — đọc 15 phút/ngày là đủ thấy thay đổi. Không deadline, không áp lực." },
   { q: "Tôi đã xem nhiều tutorial rồi, có gì khác không?", a: "Tutorial cho bạn trick. Masterclass này cho bạn hệ thống. Sự khác biệt là: trick bạn phải nhớ, hệ thống bạn sẽ hiểu và tự suy ra." },
   { q: "249K có thực sự xứng đáng không?", a: "Một buổi freelance tốt hơn nhờ typography đúng hướng có thể thu thêm 500K–2 triệu. Tài liệu này payback ngay từ dự án đầu tiên bạn áp dụng." },
-  { q: "Nếu tôi không hài lòng thì sao?", a: "Hoàn tiền 100% trong 7 ngày, không hỏi lý do. Gửi email về vietndj@gmail.com (hoặc Zalo: 0934.688.632) — chúng tôi hoàn tiền trong 24 giờ." },
+  { q: "Nếu tôi không hài lòng thì sao?", a: "Hoàn tiền 100% trong 24 giờ, không hỏi lý do. Gửi email về vietndj@gmail.com (hoặc Zalo: 0934.688.632) — chúng tôi hoàn tiền ngay." },
   { q: "Tôi mới học design, có phù hợp không?", a: "Có. Module 01 bắt đầu từ nền tảng, không yêu cầu kiến thức trước. Cả người mới lẫn designer 3–5 năm đều thấy giá trị khác nhau từ tài liệu này." },
 ];
 
@@ -276,7 +276,7 @@ function PaymentPanel({ bank, qrUrl, onConfirm }: { bank: BankInfo; qrUrl: strin
       </p>
 
       <div style={{ display: "flex", gap: 10, justifyContent: "center", marginTop: 18, paddingTop: 14, borderTop: "1px solid #1a1a1a", flexWrap: "wrap" }}>
-        {[["🔒", "Bảo mật"], ["↩", "Hoàn tiền 7 ngày"], ["⚡", "Nhận ngay"]].map(([icon, label]) => (
+        {[["🔒", "Bảo mật"], ["↩", "Hoàn tiền 24 giờ"], ["⚡", "Nhận ngay"]].map(([icon, label]) => (
           <div key={label} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, color: "#555" }}>
             <span>{icon}</span><span>{label}</span>
           </div>
@@ -300,9 +300,9 @@ function UrgencyNote() {
 function GuaranteeBox() {
   return (
     <div style={{ background: "#0a150a", border: "1px solid #27ae6033", borderRadius: 14, padding: "16px 18px" }}>
-      <p style={{ fontSize: 14, fontWeight: 700, color: GREEN, marginBottom: 8 }}>💰 Cam kết hoàn tiền 100% — 7 ngày</p>
+      <p style={{ fontSize: 14, fontWeight: 700, color: GREEN, marginBottom: 8 }}>💰 Cam kết hoàn tiền 100% — 24 giờ</p>
       <p style={{ fontSize: 13, color: "#666", lineHeight: 1.65, margin: 0 }}>
-        Nếu bạn không hài lòng vì bất kỳ lý do gì trong vòng 7 ngày, chúng tôi hoàn tiền đầy đủ. Không hỏi lý do. Liên hệ: <a href="mailto:vietndj@gmail.com" style={{ color: ORANGE }}>vietndj@gmail.com</a> (Zalo: 0934.688.632)
+        Nếu bạn không hài lòng vì bất kỳ lý do gì, chúng tôi hoàn tiền 100% đầy đủ trong 24 giờ. Không hỏi lý do. Liên hệ: <a href="mailto:vietndj@gmail.com" style={{ color: ORANGE }}>vietndj@gmail.com</a> (Zalo: 0934.688.632)
       </p>
     </div>
   );
@@ -445,10 +445,14 @@ function CheckoutContent() {
               <H>Typography Masterclass<br /><em>Ebook + Video + 5 Bonus</em></H>
               <div style={{ borderTop: "1px solid #222", borderBottom: "1px solid #222", padding: "14px 0", marginBottom: 14 }}>
                 {[
-                  ["📖 Ebook 80+ trang — Typography Masterclass", ""],
-                  ["🎬 Video hướng dẫn chi tiết toàn bộ 6 module", ""],
+                  ["📖 Ebook 400+ trang — Typography Masterclass", ""],
+                  ["🎬 Video hướng dẫn chi tiết toàn bộ 8 module", ""],
                   ["♾ Truy cập vĩnh viễn trên mọi thiết bị", ""],
-                  ...BONUSES.map((b) => [`${b.icon} BONUS: ${b.title}`, b.value]),
+                  ["🔤 BONUS 1: Bộ 100+ font chuẩn phối cặp sẵn", "599K"],
+                  ["📐 BONUS 2: Type Scale Calculator Template (Figma/Excel)", "399K"],
+                  ["✅ BONUS 3: Checklist 30 lỗi typography phổ biến", "199K"],
+                  ["👁 BONUS 4: Swipe File — 50 layout typography đỉnh", "299K"],
+                  ["📱 BONUS 5: Mini-Guide Typography cho Social Media", "199K"],
                 ].map(([label, val], i) => (
                   <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12, marginBottom: 10 }}>
                     <span style={{ fontSize: 13, color: "#b0b0b0", lineHeight: 1.5 }}>{label}</span>
@@ -473,8 +477,8 @@ function CheckoutContent() {
               <Lbl>Bạn nhận được gì ngay hôm nay</Lbl>
               <H>Truy cập ngay sau xác nhận</H>
               {[
-                "Ebook PDF 80+ trang — đọc offline mọi lúc, mọi thiết bị",
-                "Video hướng dẫn từng module — minh họa case study thực tế",
+                "Ebook PDF 400+ trang — đọc offline mọi lúc, mọi thiết bị",
+                "Video hướng dẫn chi tiết 8 module — minh họa case study thực tế",
                 "Bộ font 100+ cặp phối sẵn — áp dụng ngay vào dự án",
                 "Type Scale Calculator — tính spacing chuẩn trong 5 phút",
                 "Checklist 30 lỗi typography — review design trước khi gửi client",
@@ -583,7 +587,7 @@ function CheckoutContent() {
             ↑ QUAY LÊN ĐỂ THANH TOÁN
           </button>
           <p style={{ fontSize: 13, color: "#555", marginTop: 16 }}>
-            Đảm bảo hoàn tiền 100% trong 7 ngày · Truy cập vĩnh viễn · Hỗ trợ qua email
+            Đảm bảo hoàn tiền 100% trong 24 giờ · Truy cập vĩnh viễn · Hỗ trợ qua email
           </p>
         </div>
 
