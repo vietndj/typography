@@ -90,11 +90,17 @@ router.post("/lead/register", async (req, res) => {
 // ─── GET /api/payment/check ───────────────────────────────────────────────────
 router.get("/payment/check", async (req, res) => {
   try {
-    const sinceParam = req.query.since as string | undefined;
-    const sinceMs = sinceParam ? parseInt(sinceParam, 10) : Date.now() - 30 * 60 * 1000;
+    const since = req.query.since as string;
+    const phone = req.query.phone as string;
+    
+    if (!since || !phone) {
+      res.json({ found: false });
+      return;
+    }
 
+    const sinceMs = parseInt(since, 10);
     if (!SEPAY_API_KEY) {
-      res.json({ found: false, error: "SEPAY_API_KEY not configured" });
+      res.json({ found: false });
       return;
     }
 
@@ -112,10 +118,22 @@ router.get("/payment/check", async (req, res) => {
       return;
     }
 
+    // Strip leading zeros for robust comparison
+    const searchPhone = phone.replace(/^0+/, '');
+
     const match = data.transactions.find((tx) => {
       const amountIn = parseFloat(tx.amount_in);
-      const txTime = new Date(tx.transaction_date).getTime();
-      return amountIn === COURSE_AMOUNT && txTime >= sinceMs;
+      
+      // Parse SePay timezone correctly: SePay returns "YYYY-MM-DD HH:mm:ss" in GMT+7
+      // We append +07:00 so Node.js parses it correctly regardless of server timezone
+      const txTimeString = tx.transaction_date.trim() + "+07:00";
+      const txTime = new Date(txTimeString).getTime();
+      
+      // Check if the transaction content contains the phone number
+      const content = (tx.transaction_content || "").toLowerCase();
+      const hasPhone = content.includes(searchPhone);
+      
+      return amountIn === COURSE_AMOUNT && txTime >= sinceMs && hasPhone;
     });
 
     if (match) {

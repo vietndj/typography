@@ -331,7 +331,7 @@ function CheckoutContent() {
     const poll = async () => {
       if (!active || paymentSuccess) return;
       try {
-        const res = await fetch(`/api/payment/check?since=${since}`);
+        const res = await fetch(`/api/payment/check?since=${since}&phone=${phone}`);
         if (!res.ok) return;
         const data = await res.json() as { found: boolean; transaction?: { id: string } };
         if (data.found && active && !paymentSuccess) {
