@@ -585,17 +585,22 @@ export function deriveTextColors(base: Theme): Theme {
 
 export async function loadTheme(): Promise<Theme> {
   try {
+    const res = await fetch("/theme.json?_=" + Date.now());
+    if (res.ok) {
+      const data = (await res.json()) as Partial<Theme>;
+      const preset = data.id ? (PRESETS.find((p) => p.id === data.id) ?? PRESETS[0]) : PRESETS[0];
+      return deriveTextColors({ ...preset, ...data });
+    }
+  } catch (err) {
+    console.warn("Could not fetch server theme.json, trying local storage", err);
+  }
+
+  try {
     const local = localStorage.getItem("typo_theme");
     if (local) return deriveTextColors(JSON.parse(local));
-    
-    const res = await fetch("/api/theme?_=" + Date.now());
-    if (!res.ok) return deriveTextColors(PRESETS[0]);
-    const data = (await res.json()) as Partial<Theme>;
-    const preset = data.id ? (PRESETS.find((p) => p.id === data.id) ?? PRESETS[0]) : PRESETS[0];
-    return deriveTextColors({ ...preset, ...data });
-  } catch {
-    return deriveTextColors(PRESETS[0]);
-  }
+  } catch {}
+
+  return deriveTextColors(PRESETS[0]);
 }
 
 export async function saveTheme(theme: Theme): Promise<void> {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Theme, PRESETS, loadTheme, saveTheme, deriveTextColors, contrastRatio, computeTypeScale } from "./theme";
 import { PageContent, DEFAULT_CONTENT, loadContent, saveContent } from "./content";
 
@@ -11,7 +11,7 @@ const A = {
   border: "#2a2a34", text: "#e8e8ec", muted: "#9595a8", accent: "#00F0FF",
 };
 
-type Tab = "themes" | "content" | "colors" | "typography" | "effects";
+type Tab = "themes" | "content" | "colors" | "typography" | "effects" | "assets";
 
 interface FontGroup { family: string; files: { filename: string; weight: string; style: string }[] }
 
@@ -299,6 +299,217 @@ function LivePreview({ theme }: { theme: Theme }) {
   );
 }
 
+// ─── ASSET MANAGER ─────────────────────────────────────
+type AssetItem = { name: string; url: string; size?: number };
+
+function AssetManager() {
+  const [assets, setAssets] = useState<AssetItem[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadErr, setUploadErr] = useState("");
+  const [copied, setCopied] = useState("");
+  const [confirmDel, setConfirmDel] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const [preview, setPreview] = useState<AssetItem | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const load = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/assets");
+      const json = await res.json() as { assets: AssetItem[] };
+      setAssets(json.assets ?? []);
+    } catch { setAssets([]); }
+    finally { setLoading(false); }
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const doUpload = async (file: File) => {
+    setUploading(true); setUploadErr("");
+    try {
+      const reader = new FileReader();
+      const dataUrl: string = await new Promise((res, rej) => {
+        reader.onload = () => res(reader.result as string);
+        reader.onerror = () => rej(new Error("Cannot read"));
+        reader.readAsDataURL(file);
+      });
+      const resp = await fetch("/api/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ filename: file.name, data: dataUrl }),
+      });
+      if (!resp.ok) throw new Error("Upload failed");
+      await load();
+    } catch (e) { setUploadErr(String(e)); }
+    finally { setUploading(false); }
+  };
+
+  const doDelete = async (name: string) => {
+    try {
+      await fetch(`/api/assets/${encodeURIComponent(name)}`, { method: "DELETE" });
+      setAssets(a => a.filter(x => x.name !== name));
+      if (preview?.name === name) setPreview(null);
+    } catch (e) { alert("Lỗi xóa: " + e); }
+    setConfirmDel(null);
+  };
+
+  const copyUrl = (url: string) => {
+    navigator.clipboard.writeText(window.location.origin + url);
+    setCopied(url);
+    setTimeout(() => setCopied(""), 1800);
+  };
+
+  const filtered = assets.filter(a => a.name.toLowerCase().includes(search.toLowerCase()));
+  const IMAGE_EXT = /\.(gif|jpe?g|png|webp|svg)$/i;
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", gap: 0 }}>
+
+      {/* Upload zone */}
+      <div
+        onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+        onDragLeave={() => setDragging(false)}
+        onDrop={(e) => { e.preventDefault(); setDragging(false); Array.from(e.dataTransfer.files).forEach(doUpload); }}
+        style={{
+          border: `2px dashed ${dragging ? A.accent : A.border}`,
+          borderRadius: 10, padding: dragging ? "24px 16px" : "16px",
+          textAlign: "center", background: dragging ? `${A.accent}08` : "transparent",
+          transition: "all 0.15s", marginBottom: 12, cursor: "pointer",
+        }}
+        onClick={() => !uploading && fileRef.current?.click()}
+      >
+        {uploading ? (
+          <div style={{ fontSize: 12, color: A.accent, fontFamily: MONO }}>⏳ Đang tải lên...</div>
+        ) : (
+          <>
+            <div style={{ fontSize: 24, marginBottom: 4 }}>📤</div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: A.text, marginBottom: 2 }}>Kéo ảnh / GIF vào đây</div>
+            <div style={{ fontSize: 10, color: A.muted, fontFamily: MONO }}>hoặc click để chọn file • JPG PNG GIF WebP SVG</div>
+          </>
+        )}
+      </div>
+      {uploadErr && <div style={{ fontSize: 10, color: "#ff5555", fontFamily: MONO, marginBottom: 8 }}>{uploadErr}</div>}
+      <input ref={fileRef} type="file" accept="image/*" multiple style={{ display: "none" }}
+        onChange={(e) => { Array.from(e.target.files ?? []).forEach(doUpload); e.target.value = ""; }} />
+
+      {/* Search + refresh */}
+      <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
+        <input
+          type="text" placeholder="🔍 Tìm kiếm ảnh..." value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          style={{ flex: 1, background: A.card, border: `1px solid ${A.border}`, borderRadius: 7, color: A.text, padding: "7px 10px", fontSize: 11, fontFamily: MONO, outline: "none" }}
+        />
+        <button onClick={load} title="Làm mới danh sách"
+          style={{ background: A.card, border: `1px solid ${A.border}`, borderRadius: 7, color: A.muted, cursor: "pointer", padding: "7px 10px", fontSize: 12 }}>
+          ↺
+        </button>
+      </div>
+
+      {/* Stats */}
+      <div style={{ fontSize: 9, color: "#555", fontFamily: MONO, marginBottom: 8 }}>
+        {loading ? "...Đang tải" : `${filtered.length} tài nguyên • /public/uploads/`}
+      </div>
+
+      {/* Grid */}
+      {filtered.length === 0 && !loading ? (
+        <div style={{ textAlign: "center", padding: "32px 16px", color: "#444", fontFamily: MONO, fontSize: 11 }}>
+          {assets.length === 0 ? "Chưa có ảnh nào — tải lên ở ô trên" : "Không tìm thấy"}
+        </div>
+      ) : (
+        <div style={{ flex: 1, overflowY: "auto" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 8 }}>
+            {filtered.map(a => (
+              <div key={a.name}
+                style={{ background: A.card, border: `1px solid ${A.border}`, borderRadius: 8, overflow: "hidden", position: "relative", transition: "border-color 0.15s", cursor: "pointer" }}
+                onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.borderColor = A.accent + "66"}
+                onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.borderColor = A.border}
+                onClick={() => setPreview(a)}
+              >
+                {/* Thumbnail */}
+                <div style={{ height: 80, background: "#111", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+                  {IMAGE_EXT.test(a.name)
+                    ? <img src={a.url} alt={a.name} style={{ maxWidth: "100%", maxHeight: 80, display: "block", objectFit: "contain" }}
+                        onError={e => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} />
+                    : <span style={{ fontSize: 24 }}>🗂</span>
+                  }
+                </div>
+                {/* Name */}
+                <div style={{ padding: "5px 7px", fontSize: 9, fontFamily: MONO, color: "#666",
+                  overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+                  title={a.name}>
+                  {a.name.replace(/^\d+_/, "")}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Preview modal */}
+      {preview && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.92)", zIndex: 9999,
+          display: "flex", alignItems: "center", justifyContent: "center" }}
+          onClick={() => { if (confirmDel !== preview.name) setPreview(null); }}>
+          <div style={{ background: A.panel, border: `1px solid ${A.border}`, borderRadius: 16,
+            padding: "24px", width: 440, maxWidth: "90vw", maxHeight: "90vh", overflowY: "auto" }}
+            onClick={e => e.stopPropagation()}>
+            {/* Header */}
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16, alignItems: "flex-start", gap: 8 }}>
+              <div style={{ fontSize: 11, fontFamily: MONO, color: A.accent, fontWeight: 700, wordBreak: "break-all" }}>
+                {preview.name.replace(/^\d+_/, "")}
+              </div>
+              <button onClick={() => setPreview(null)}
+                style={{ background: "none", border: "none", color: A.muted, cursor: "pointer", fontSize: 18, flexShrink: 0 }}>✕</button>
+            </div>
+            {/* Full image */}
+            {IMAGE_EXT.test(preview.name) && (
+              <div style={{ borderRadius: 8, overflow: "hidden", border: `1px solid ${A.border}`, marginBottom: 16 }}>
+                <img src={preview.url} alt={preview.name} style={{ width: "100%", display: "block", maxHeight: 360, objectFit: "contain", background: "#0a0a0a" }} />
+              </div>
+            )}
+            {/* URL */}
+            <div style={{ background: A.card, border: `1px solid ${A.border}`, borderRadius: 7, padding: "8px 12px", fontFamily: MONO, fontSize: 10, color: A.muted, marginBottom: 14, wordBreak: "break-all" }}>
+              {preview.url}
+            </div>
+            {/* Actions */}
+            <div style={{ display: "flex", gap: 8 }}>
+              <button onClick={() => copyUrl(preview.url)}
+                style={{ flex: 1, padding: "9px", borderRadius: 7, border: `1px solid ${A.accent}44`,
+                  background: copied === preview.url ? `${A.accent}18` : "transparent",
+                  color: copied === preview.url ? A.accent : A.muted,
+                  fontFamily: MONO, fontSize: 11, fontWeight: 700, cursor: "pointer", transition: "all 0.15s" }}>
+                {copied === preview.url ? "✓ Đã copy URL" : "📋 Copy URL"}
+              </button>
+              {confirmDel === preview.name ? (
+                <>
+                  <button onClick={() => doDelete(preview.name)}
+                    style={{ flex: 1, padding: "9px", borderRadius: 7, border: "none",
+                      background: "#cc2222", color: "#fff", fontFamily: MONO, fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
+                    Xác nhận xóa
+                  </button>
+                  <button onClick={() => setConfirmDel(null)}
+                    style={{ padding: "9px 14px", borderRadius: 7, border: `1px solid ${A.border}`,
+                      background: "transparent", color: A.muted, fontFamily: MONO, fontSize: 11, cursor: "pointer" }}>
+                    Hủy
+                  </button>
+                </>
+              ) : (
+                <button onClick={() => setConfirmDel(preview.name)}
+                  style={{ padding: "9px 14px", borderRadius: 7, border: "1px solid #cc222244",
+                    background: "transparent", color: "#ff7e7e", fontFamily: MONO, fontSize: 11, cursor: "pointer" }}>
+                  🗑 Xóa
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── MAIN ADMIN ───────────────────────────────────────────────
 export default function Admin() {
   const [theme, setTheme] = useState<Theme>(() => deriveTextColors(PRESETS[0]));
@@ -359,9 +570,31 @@ export default function Admin() {
     { id: "colors", label: "Màu sắc" },
     { id: "typography", label: "Chữ" },
     { id: "effects", label: "Hiệu ứng" },
+    { id: "assets", label: "🖼 Tài nguyên" },
   ];
 
   const toggleSection = (id: string) => setExpandedContent((p) => p === id ? null : id);
+
+  const [deployStatus, setDeployStatus] = useState<"idle" | "deploying" | "done" | "error">("idle");
+
+  const handleDeploy = async () => {
+    setDeployStatus("deploying");
+    try {
+      const res = await fetch("/api/deploy", { method: "POST" });
+      const data = await res.json() as { success?: boolean; error?: boolean; message?: string };
+      if (res.ok && data.success) {
+        setDeployStatus("done");
+        alert("🎉 Đồng bộ thành công lên Github! Hệ thống Vercel online đang tự động build và cập nhật.");
+        setTimeout(() => setDeployStatus("idle"), 3000);
+      } else {
+        throw new Error(data.message || "Lỗi không xác định");
+      }
+    } catch (err) {
+      setDeployStatus("error");
+      alert("❌ Lỗi đồng bộ: " + String(err));
+      setTimeout(() => setDeployStatus("idle"), 3000);
+    }
+  };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: A.bg, color: A.text, fontFamily: AEONIK }}>
@@ -390,10 +623,21 @@ export default function Admin() {
           </button>
           <button onClick={handleSave} style={{
             background: status === "saved" ? "#1a6b40" : A.accent, color: status === "saved" ? "#7effc0" : "#06181b",
-            border: "none", borderRadius: 8, padding: "8px 20px", fontWeight: 800, fontSize: 13, fontFamily: AEONIK, cursor: "pointer", transition: "all 0.2s",
-          }}>
-            {status === "saved" ? "✓ Đã lưu" : "💾 Lưu & Áp dụng"}
+            border: "none", borderRadius: 8, padding: "8px 20px", fontWeight: 800, fontSize: 13, fontFamily: AEONIK, cursor: status === "saving" ? "default" : "pointer", transition: "all 0.2s",
+          }} disabled={status === "saving"}>
+            {status === "saving" ? "⏳ Đang lưu..." : status === "saved" ? "✓ Đã lưu" : "💾 Lưu & Áp dụng"}
           </button>
+          {status === "idle" && (
+            <button onClick={handleDeploy} disabled={deployStatus === "deploying"} style={{
+              background: deployStatus === "done" ? "#1a6b40" : deployStatus === "deploying" ? "#222" : "#9828e6",
+              color: deployStatus === "done" ? "#7effc0" : "#fff",
+              border: "none", borderRadius: 8, padding: "8px 20px", fontWeight: 800, fontSize: 13, fontFamily: AEONIK,
+              cursor: deployStatus === "deploying" ? "default" : "pointer",
+              transition: "all 0.2s",
+            }}>
+              {deployStatus === "deploying" ? "⚡ Đang đồng bộ..." : deployStatus === "done" ? "✓ Đã đồng bộ" : "🚀 Đồng bộ lên Web"}
+            </button>
+          )}
         </div>
       </header>
 
@@ -801,6 +1045,10 @@ export default function Admin() {
                 <SliderRow label="Card border radius" value={theme.cardRadius} min={0} max={32} unit="px" onChange={(v) => updateTheme({ cardRadius: v })} />
                 <ToggleRow label="Accent glow effect" value={theme.accentGlow} onChange={(v) => updateTheme({ accentGlow: v })} />
               </div>
+            )}
+
+            {tab === "assets" && (
+              <AssetManager />
             )}
 
           </div>

@@ -325,196 +325,180 @@ function RegForm() {
   );
 }
 
-// ─── CSS abstract icon system ─────────────────────────────────
-const ICON_KF = `
-@keyframes ic-pulse{0%,100%{opacity:.55;transform:scale(.92)}50%{opacity:1;transform:scale(1)}}
-@keyframes ic-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-@keyframes ic-blink{0%,45%{opacity:1}50%,100%{opacity:.2}}
-@keyframes ic-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-@keyframes ic-scan2{0%,100%{transform:scaleX(.3);opacity:.5}50%{transform:scaleX(1);opacity:1}}
+// ─── Unified SVG Icon System ─────────────────────────────────────
+const ICON_CSS = `
+@keyframes ic-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes ic-pulse{0%,100%{opacity:.5;transform:scale(.88)}50%{opacity:1;transform:scale(1)}}
+@keyframes ic-scan{0%,100%{transform:translateY(-9px)}50%{transform:translateY(9px)}}
 `;
-let _icKfInjected = false;
+let _icCssInjected = false;
 function injectIconKf() {
-  if (_icKfInjected) return; _icKfInjected = true;
-  const s = document.createElement("style"); s.textContent = ICON_KF; document.head.appendChild(s);
+  if (_icCssInjected) return; _icCssInjected = true;
+  const s = document.createElement("style"); s.textContent = ICON_CSS; document.head.appendChild(s);
 }
 
-/** Book shape — 2 pages, spine, horizontal text lines */
-function IconBook({ accent }: { accent: string }) {
+function IcBox({ size = 40, float: fl = true, pulse = false, children }: {
+  size?: number; float?: boolean; pulse?: boolean; children: React.ReactNode;
+}) {
   injectIconKf();
-  const c = accent;
+  const anim = pulse
+    ? "ic-pulse 2.6s ease-in-out infinite"
+    : fl ? "ic-float 3.2s ease-in-out infinite"
+    : "none";
   return (
-    <div style={{ width: 36, height: 32, position: "relative", animation: "ic-float 3s ease-in-out infinite" }}>
-      <div style={{ position: "absolute", left: 17, top: 0, width: 2, height: "100%", background: c, borderRadius: 1, opacity: 0.9 }} />
-      <div style={{ position: "absolute", left: 0, top: 0, width: 17, height: 32, background: `${c}22`, border: `1.5px solid ${c}66`, borderRight: "none", borderRadius: "3px 0 0 3px" }}>
-        {[6, 12, 18, 24].map(y => <div key={y} style={{ position: "absolute", left: 3, top: y, right: 4, height: 1.5, background: `${c}55`, borderRadius: 1 }} />)}
-      </div>
-      <div style={{ position: "absolute", right: 0, top: 0, width: 17, height: 32, background: `${c}15`, border: `1.5px solid ${c}44`, borderLeft: "none", borderRadius: "0 3px 3px 0" }}>
-        {[6, 12, 18].map(y => <div key={y} style={{ position: "absolute", left: 4, top: y, right: 3, height: 1.5, background: `${c}40`, borderRadius: 1 }} />)}
-      </div>
-    </div>
+    <svg width={size} height={size} viewBox="0 0 40 40" fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{ animation: anim, display: "block", overflow: "visible" }}>
+      {children}
+    </svg>
   );
 }
 
-/** Play-in-screen — laptop silhouette with triangle */
-function IconVideo({ accent }: { accent: string }) {
-  injectIconKf();
-  const c = accent;
+function IconBook({ accent: c }: { accent: string }) {
   return (
-    <div style={{ width: 38, height: 30, position: "relative", animation: "ic-float 3.5s ease-in-out infinite" }}>
-      <div style={{ position: "absolute", inset: 0, border: `1.5px solid ${c}77`, borderRadius: 4, background: `${c}0d` }} />
-      <div style={{ position: "absolute", bottom: -5, left: "50%", transform: "translateX(-50%)", width: 24, height: 4, background: `${c}44`, borderRadius: "0 0 3px 3px" }} />
-      <div style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-42%, -50%)",
-        width: 0, height: 0, borderTop: "6px solid transparent", borderBottom: "6px solid transparent", borderLeft: `10px solid ${c}`, filter: `drop-shadow(0 0 4px ${c}88)` }} />
-    </div>
+    <IcBox>
+      <line x1="20" y1="8" x2="20" y2="34" stroke={c} strokeWidth="2" strokeLinecap="round"/>
+      <path d="M20 10 C14 10 8 12 8 15 L8 34 C8 31 14 29 20 29 Z" fill={`${c}18`} stroke={c} strokeWidth="1.8" strokeLinejoin="round"/>
+      <path d="M20 10 C26 10 32 12 32 15 L32 34 C32 31 26 29 20 29 Z" fill={`${c}0d`} stroke={`${c}99`} strokeWidth="1.8" strokeLinejoin="round"/>
+      <line x1="11" y1="17" x2="18" y2="16.5" stroke={`${c}88`} strokeWidth="1.5" strokeLinecap="round"/>
+      <line x1="11" y1="20.5" x2="18" y2="20" stroke={`${c}66`} strokeWidth="1.5" strokeLinecap="round"/>
+      <line x1="11" y1="24" x2="17" y2="23.5" stroke={`${c}44`} strokeWidth="1.5" strokeLinecap="round"/>
+      <circle cx="20" cy="8" r="2" fill={c} style={{ filter: `drop-shadow(0 0 4px ${c})` }}/>
+    </IcBox>
   );
 }
 
-/** Map grid — dots arranged in grid */
-function IconMap({ accent }: { accent: string }) {
-  injectIconKf();
-  const c = accent;
-  const dots = [[4,4],[14,4],[24,4],[4,12],[14,12],[24,12],[4,20],[14,20],[24,20]];
+function IconVideo({ accent: c }: { accent: string }) {
   return (
-    <div style={{ width: 30, height: 26, position: "relative" }}>
-      {dots.map(([x,y],i) => <div key={i} style={{ position: "absolute", left: x, top: y, width: 4, height: 4, borderRadius: "50%", background: i===4?c:`${c}55`, boxShadow: i===4?`0 0 6px ${c}`:undefined, animation: i===4?"ic-pulse 2s ease-in-out infinite":undefined }} />)}
-      <svg style={{ position: "absolute", inset: 0 }} width={30} height={26}>
-        <line x1={6} y1={6} x2={22} y2={22} stroke={`${c}33`} strokeWidth={1} />
-        <line x1={22} y1={6} x2={6} y2={22} stroke={`${c}22`} strokeWidth={1} />
-      </svg>
-    </div>
+    <IcBox>
+      <rect x="4" y="7" width="32" height="22" rx="3" stroke={c} strokeWidth="1.8" fill={`${c}10`}/>
+      <line x1="20" y1="29" x2="20" y2="35" stroke={`${c}88`} strokeWidth="2" strokeLinecap="round"/>
+      <line x1="14" y1="35" x2="26" y2="35" stroke={`${c}88`} strokeWidth="2" strokeLinecap="round"/>
+      <polygon points="16,13 16,25 28,19" fill={c} style={{ filter: `drop-shadow(0 0 5px ${c})` }}/>
+      <circle cx="32" cy="10" r="1.5" fill={`${c}66`}/>
+    </IcBox>
   );
 }
 
-/** Clipboard — rect + horizontal lines */
-function IconClipboard({ accent }: { accent: string }) {
-  injectIconKf();
-  const c = accent;
+function IconMap({ accent: c }: { accent: string }) {
   return (
-    <div style={{ width: 28, height: 34, position: "relative", border: `1.5px solid ${c}66`, borderRadius: 3, background: `${c}0d` }}>
-      <div style={{ position: "absolute", top: -4, left: "50%", transform: "translateX(-50%)", width: 10, height: 6, background: `${c}88`, borderRadius: "3px 3px 0 0" }} />
-      {[8, 14, 20, 26].map(y => <div key={y} style={{ position: "absolute", left: 5, right: 5, top: y, height: 1.5, background: y===8?`${c}99`:`${c}44`, borderRadius: 1 }} />)}
-    </div>
+    <IcBox float={false} pulse>
+      <path d="M8 32 Q12 20 20 18 Q28 16 32 8" stroke={`${c}55`} strokeWidth="1.5" strokeLinecap="round" strokeDasharray="3 3"/>
+      <circle cx="8" cy="32" r="3" fill={`${c}33`} stroke={c} strokeWidth="1.8"/>
+      <circle cx="20" cy="18" r="3" fill={`${c}55`} stroke={c} strokeWidth="1.8"/>
+      <circle cx="32" cy="8" r="4.5" fill={`${c}22`} stroke={c} strokeWidth="1.8" style={{ filter: `drop-shadow(0 0 6px ${c}88)` }}/>
+      <circle cx="32" cy="8" r="2" fill={c}/>
+    </IcBox>
   );
 }
 
-/** Checkmark circle */
-function IconCheck({ accent }: { accent: string }) {
-  injectIconKf();
-  const c = accent;
+function IconClipboard({ accent: c }: { accent: string }) {
   return (
-    <div style={{ width: 30, height: 30, borderRadius: "50%", border: `2px solid ${c}`, background: `${c}12`, position: "relative", animation: "ic-pulse 2.5s ease-in-out infinite", boxShadow: `0 0 10px -4px ${c}` }}>
-      <div style={{ position: "absolute", left: 7, top: 14, width: 5, height: 2, background: c, transform: "rotate(45deg)", transformOrigin: "bottom left", borderRadius: 1 }} />
-      <div style={{ position: "absolute", left: 10, top: 18, width: 10, height: 2, background: c, transform: "rotate(-50deg)", transformOrigin: "left center", borderRadius: 1 }} />
-    </div>
+    <IcBox>
+      <rect x="15" y="5" width="10" height="6" rx="2" fill={`${c}66`} stroke={c} strokeWidth="1.8"/>
+      <rect x="8" y="9" width="24" height="28" rx="3" fill={`${c}0d`} stroke={c} strokeWidth="1.8"/>
+      <line x1="13" y1="18" x2="27" y2="18" stroke={`${c}99`} strokeWidth="1.8" strokeLinecap="round"/>
+      <line x1="13" y1="23" x2="24" y2="23" stroke={`${c}66`} strokeWidth="1.8" strokeLinecap="round"/>
+      <line x1="13" y1="28" x2="26" y2="28" stroke={`${c}44`} strokeWidth="1.8" strokeLinecap="round"/>
+    </IcBox>
   );
 }
 
-/** Speech bubble */
-function IconSpeech({ accent }: { accent: string }) {
-  injectIconKf();
-  const c = accent;
+function IconCheck({ accent: c }: { accent: string }) {
   return (
-    <div style={{ width: 32, height: 30, position: "relative", animation: "ic-float 3s ease-in-out infinite" }}>
-      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 22, border: `1.5px solid ${c}77`, borderRadius: 6, background: `${c}10` }}>
-        {[6, 12].map(y => <div key={y} style={{ position: "absolute", left: 5, right: 5, top: y, height: 1.5, background: `${c}55`, borderRadius: 1 }} />)}
-      </div>
-      <div style={{ position: "absolute", bottom: 2, left: 8, width: 0, height: 0, borderLeft: "6px solid transparent", borderRight: "3px solid transparent", borderTop: `7px solid ${c}66` }} />
-    </div>
+    <IcBox float={false} pulse>
+      <circle cx="20" cy="20" r="13" fill={`${c}12`} stroke={c} strokeWidth="1.8" style={{ filter: `drop-shadow(0 0 8px ${c}55)` }}/>
+      <polyline points="13,20 18,26 28,14" stroke={c} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+    </IcBox>
   );
 }
 
-/** Phone screen */
-function IconPhone({ accent }: { accent: string }) {
-  injectIconKf();
-  const c = accent;
+function IconSpeech({ accent: c }: { accent: string }) {
   return (
-    <div style={{ width: 22, height: 34, border: `1.5px solid ${c}77`, borderRadius: 5, background: `${c}0d`, position: "relative", animation: "ic-float 3.5s ease-in-out infinite" }}>
-      <div style={{ position: "absolute", top: 3, left: 3, right: 3, bottom: 7, background: `${c}18`, borderRadius: 3 }}>
-        <div style={{ position: "absolute", top: 4, left: 2, right: 2, height: 1.5, background: `${c}55`, borderRadius: 1, animation: "ic-scan2 2s ease-in-out infinite" }} />
-        <div style={{ position: "absolute", top: 8, left: 2, right: 4, height: 1.5, background: `${c}33`, borderRadius: 1 }} />
-        <div style={{ position: "absolute", top: 12, left: 2, right: 2, height: 1.5, background: `${c}44`, borderRadius: 1 }} />
-      </div>
-      <div style={{ position: "absolute", bottom: 2.5, left: "50%", transform: "translateX(-50%)", width: 6, height: 1.5, background: `${c}77`, borderRadius: 1 }} />
-    </div>
+    <IcBox>
+      <rect x="5" y="5" width="28" height="22" rx="5" fill={`${c}10`} stroke={c} strokeWidth="1.8"/>
+      <path d="M10 27 L7 35 L18 29" fill={`${c}22`} stroke={c} strokeWidth="1.8" strokeLinejoin="round"/>
+      {[12, 20, 28].map(x => <circle key={x} cx={x} cy="16" r="2" fill={`${c}99`}/>)}
+    </IcBox>
   );
 }
 
-/** Shield with coin — guarantee icon */
-function IconGuarantee({ accent }: { accent: string }) {
-  injectIconKf();
-  const c = accent;
+function IconPhone({ accent: c }: { accent: string }) {
   return (
-    <div style={{ width: 42, height: 46, position: "relative", animation: "ic-float 4s ease-in-out infinite" }}>
-      <svg width={42} height={46} viewBox="0 0 42 46" fill="none" style={{ position: "absolute" }}>
-        <path d="M21 2 L38 9 L38 23 C38 33 21 43 21 43 C21 43 4 33 4 23 L4 9 Z"
-          fill={`${c}14`} stroke={c} strokeWidth={1.5} strokeLinejoin="round" opacity={0.85} />
-      </svg>
-      <div style={{ position: "absolute", left: "50%", top: "52%", transform: "translate(-50%,-50%)", width: 18, height: 18, borderRadius: "50%", border: `1.5px solid ${c}`, background: `${c}18`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <span style={{ fontSize: 9, fontWeight: 900, color: c, fontFamily: "monospace", lineHeight: 1 }}>₫</span>
-      </div>
-    </div>
+    <IcBox>
+      <rect x="11" y="3" width="18" height="34" rx="4" fill={`${c}0d`} stroke={c} strokeWidth="1.8"/>
+      <rect x="14" y="8" width="12" height="20" rx="2" fill={`${c}18`}/>
+      <line x1="15" y1="18" x2="25" y2="18" stroke={c} strokeWidth="1.5" strokeLinecap="round"
+        style={{ animation: "ic-scan 2s ease-in-out infinite", transformOrigin: "20px 18px" }}/>
+      <circle cx="20" cy="33" r="2" stroke={`${c}88`} strokeWidth="1.5"/>
+      <rect x="17" y="5.5" width="6" height="2" rx="1" fill={`${c}55`}/>
+    </IcBox>
+  );
+}
+
+function IconGuarantee({ accent: c }: { accent: string }) {
+  return (
+    <IcBox size={44}>
+      <path d="M20 4 L34 10 L34 22 C34 30 20 38 20 38 C20 38 6 30 6 22 L6 10 Z"
+        fill={`${c}14`} stroke={c} strokeWidth="1.8" strokeLinejoin="round"
+        style={{ filter: `drop-shadow(0 0 8px ${c}44)` }}/>
+      <polyline points="13,21 17,26 27,15" stroke={c} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+    </IcBox>
   );
 }
 
 const BONUS_ICONS = [IconMap, IconClipboard, IconCheck, IconSpeech, IconPhone];
 
-// ─── Skill card CSS icons ──────────────────────────────────────
-const SKILL_KF = `
-@keyframes sk-scan{0%,100%{transform:translateX(-50%) translateY(-13px)}50%{transform:translateX(-50%) translateY(13px)}}
-@keyframes sk-b1{0%,100%{width:80%}50%{width:35%}}
-@keyframes sk-b2{0%,100%{width:50%}50%{width:90%}}
-@keyframes sk-b3{0%,100%{width:70%}50%{width:25%}}
-@keyframes sk-b4{0%,100%{width:38%}50%{width:68%}}
-@keyframes sk-ring{0%,100%{transform:scale(0.55);opacity:0.35}50%{transform:scale(1);opacity:0.9}}
-@keyframes sk-d1{0%,100%{transform:scale(1)}33%{transform:scale(1.7)}}
-@keyframes sk-d2{0%,100%{transform:scale(1)}66%{transform:scale(1.7)}}
-@keyframes sk-d3{0%,100%{transform:scale(1)}100%{transform:scale(1.7)}}
-`;
-let _kfInjected = false;
-function SkillIcon({ idx, accent }: { idx: number; accent: string }) {
-  if (!_kfInjected) {
-    const s = document.createElement("style"); s.textContent = SKILL_KF;
-    document.head.appendChild(s); _kfInjected = true;
-  }
+// ─── Skill card SVG icons (unified system) ──────────────────────
+function SkillIcon({ idx, accent: c }: { idx: number; accent: string }) {
+  injectIconKf();
   const sz = 56;
+  // idx 0 — Crosshair + scan (typography measurement)
   if (idx === 0) return (
-    <div style={{ width: sz, height: sz, position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <div style={{ position: "absolute", width: 2, height: 38, background: `${accent}30`, left: "50%", top: 9, transform: "translateX(-50%)" }} />
-      <div style={{ position: "absolute", width: 34, height: 2, background: `${accent}30`, top: "50%", left: "50%", transform: "translate(-50%,-50%)" }} />
-      <div style={{ position: "absolute", width: 38, height: 2, left: "50%", top: "50%", background: `linear-gradient(90deg,transparent,${accent},transparent)`, animation: "sk-scan 2s ease-in-out infinite", boxShadow: `0 0 8px ${accent}` }} />
-    </div>
+    <svg width={sz} height={sz} viewBox="0 0 40 40" fill="none" style={{ display: "block", overflow: "visible" }}>
+      <line x1="20" y1="5" x2="20" y2="35" stroke={`${c}33`} strokeWidth="1.5" strokeLinecap="round"/>
+      <line x1="5" y1="20" x2="35" y2="20" stroke={`${c}33`} strokeWidth="1.5" strokeLinecap="round"/>
+      <rect x="10" y="10" width="20" height="20" rx="2" fill="none" stroke={`${c}33`} strokeWidth="1.2" strokeDasharray="3 3"/>
+      <line x1="5" y1="20" x2="35" y2="20" stroke={c} strokeWidth="2" strokeLinecap="round"
+        style={{ animation: "ic-scan 2.2s ease-in-out infinite", transformOrigin: "20px 20px" }}/>
+      <circle cx="20" cy="20" r="3" fill={c} style={{ filter: `drop-shadow(0 0 6px ${c})` }}/>
+    </svg>
   );
+  // idx 1 — Rhythm bars (typographic rhythm)
   if (idx === 1) return (
-    <div style={{ width: sz, height: sz, display: "flex", flexDirection: "column", justifyContent: "center", gap: 7, padding: "4px 8px" }}>
-      {[0,1,2,3].map(j => (
-        <div key={j} style={{ height: 3, borderRadius: 2, background: accent, opacity: 0.85,
-          animation: `sk-b${j+1} 2.4s ease-in-out infinite`, animationDelay: `${j*0.3}s` }} />
+    <svg width={sz} height={sz} viewBox="0 0 40 40" fill="none" style={{ display: "block" }}>
+      <line x1="8" y1="6" x2="8" y2="34" stroke={`${c}44`} strokeWidth="1.5" strokeLinecap="round"/>
+      {[{ w: 22, d: "0s" }, { w: 14, d: "0.3s" }, { w: 26, d: "0.6s" }, { w: 18, d: "0.9s" }].map((b, i) => (
+        <rect key={i} x="10" y={9 + i * 7} width={b.w} height="3.5" rx="2" fill={c} opacity="0.82"
+          style={{ animation: "ic-pulse 2.2s ease-in-out infinite", animationDelay: b.d }}/>
       ))}
-    </div>
+    </svg>
   );
+  // idx 2 — Concentric rings (visual hierarchy/weight)
   if (idx === 2) return (
-    <div style={{ width: sz, height: sz, position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <div style={{ width: 44, height: 44, borderRadius: "50%", border: `1.5px solid ${accent}33`, position: "absolute" }} />
-      <div style={{ width: 30, height: 30, borderRadius: "50%", border: `2px solid ${accent}`, position: "absolute", animation: "sk-ring 2s ease-in-out infinite" }} />
-      <div style={{ width: 5, height: 5, borderRadius: "50%", background: accent, boxShadow: `0 0 8px ${accent}` }} />
-    </div>
+    <svg width={sz} height={sz} viewBox="0 0 40 40" fill="none" style={{ display: "block", overflow: "visible" }}>
+      <circle cx="20" cy="20" r="16" fill="none" stroke={`${c}18`} strokeWidth="1.5"/>
+      <circle cx="20" cy="20" r="11" fill="none" stroke={`${c}33`} strokeWidth="1.8"
+        style={{ animation: "ic-pulse 2.6s ease-in-out infinite" }}/>
+      <circle cx="20" cy="20" r="6" fill={`${c}22`} stroke={c} strokeWidth="2"
+        style={{ filter: `drop-shadow(0 0 6px ${c})` }}/>
+      <circle cx="20" cy="20" r="2.5" fill={c}/>
+    </svg>
   );
-  // idx === 3
-  const pts = [{ x: 8, y: 44 }, { x: 28, y: 10 }, { x: 48, y: 44 }];
-  const anims = ["sk-d1","sk-d2","sk-d3"];
+  // idx 3 — 3×3 dot grid (layout system)
   return (
-    <div style={{ width: sz, height: sz, position: "relative" }}>
-      <svg width={sz} height={sz} viewBox={`0 0 ${sz} ${sz}`} style={{ position: "absolute" }}>
-        <path d={`M ${pts[0].x} ${pts[0].y} Q ${pts[1].x} ${pts[1].y}, ${pts[2].x} ${pts[2].y}`}
-          fill="none" stroke={`${accent}44`} strokeWidth={1.5} strokeDasharray="4 3" />
-      </svg>
-      {pts.map((p, j) => (
-        <div key={j} style={{ position: "absolute", width: 8, height: 8, borderRadius: "50%", background: accent, left: p.x-4, top: p.y-4,
-          animation: `${anims[j]} 2.4s ease-in-out infinite`, animationDelay: `${j*0.5}s`,
-          boxShadow: `0 0 6px ${accent}88` }} />
+    <svg width={sz} height={sz} viewBox="0 0 40 40" fill="none" style={{ display: "block", overflow: "visible" }}>
+      <line x1="8" y1="8" x2="32" y2="32" stroke={`${c}18`} strokeWidth="1" strokeDasharray="2 4"/>
+      <line x1="32" y1="8" x2="8" y2="32" stroke={`${c}14`} strokeWidth="1" strokeDasharray="2 4"/>
+      {[8,20,32].flatMap(x => [8,20,32].map(y => ({ x, y }))).map((pt, i) => (
+        <circle key={i} cx={pt.x} cy={pt.y} r={i === 4 ? 4 : 2.2}
+          fill={i === 4 ? c : `${c}55`}
+          style={i === 4
+            ? { filter: `drop-shadow(0 0 5px ${c})`, animation: "ic-pulse 2.4s ease-in-out infinite" }
+            : undefined
+          }/>
       ))}
-    </div>
+    </svg>
   );
 }
 

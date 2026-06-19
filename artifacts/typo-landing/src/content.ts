@@ -393,16 +393,22 @@ export const DEFAULT_CONTENT: PageContent = {
 
 export async function loadContent(): Promise<PageContent> {
   try {
+    // 1. Try to fetch from server first (either static file or proxy API)
+    const res = await fetch("/content.json?_=" + Date.now());
+    if (res.ok) {
+      const data = (await res.json()) as Partial<PageContent>;
+      return { ...DEFAULT_CONTENT, ...data };
+    }
+  } catch (err) {
+    console.warn("Could not fetch server content.json, trying local storage", err);
+  }
+
+  try {
     const local = localStorage.getItem("typo_content");
     if (local) return { ...DEFAULT_CONTENT, ...JSON.parse(local) };
+  } catch {}
 
-    const res = await fetch("/api/content?_=" + Date.now());
-    if (!res.ok) return { ...DEFAULT_CONTENT };
-    const data = (await res.json()) as Partial<PageContent>;
-    return { ...DEFAULT_CONTENT, ...data };
-  } catch {
-    return { ...DEFAULT_CONTENT };
-  }
+  return { ...DEFAULT_CONTENT };
 }
 
 export async function saveContent(content: PageContent): Promise<void> {
