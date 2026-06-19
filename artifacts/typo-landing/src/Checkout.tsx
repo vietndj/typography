@@ -17,11 +17,11 @@ const BG = "var(--theme-bg)";
 const CARD = "var(--theme-card)";
 
 const BONUSES = [
-  { icon: "🔤", title: "Bộ 100+ font chuẩn phối cặp sẵn", value: "599K" },
-  { icon: "📐", title: "Type Scale Calculator Template (Figma/Excel)", value: "399K" },
-  { icon: "✅", title: "Checklist 30 lỗi typography phổ biến", value: "199K" },
-  { icon: "👁", title: "Swipe File — 50 layout typography đỉnh", value: "299K" },
-  { icon: "📱", title: "Mini-Guide Typography cho Social Media", value: "199K" },
+  { icon: "🗺", title: "Bản đồ Xưởng chữ Quốc tế & Kho Trial Font", value: "599K" },
+  { icon: "📝", title: "Cheat-sheet logic tính cách Font & ví dụ thương hiệu", value: "399K" },
+  { icon: "✅", title: "Checklist Typography phổ biến", value: "199K" },
+  { icon: "🎬", title: "Kịch bản Thuyết trình Ngôn ngữ Thị giác", value: "299K" },
+  { icon: "📱", title: "Hướng dẫn Tối ưu Typography cho UI/UX", value: "199K" },
 ];
 
 const OBJECTIONS = [
@@ -444,11 +444,11 @@ function CheckoutContent() {
                   ["📖 Ebook 400+ trang — Typography Masterclass", ""],
                   ["🎬 Video hướng dẫn chi tiết toàn bộ 8 module", ""],
                   ["♾ Truy cập vĩnh viễn trên mọi thiết bị", ""],
-                  ["🔤 BONUS 1: Bộ 100+ font chuẩn phối cặp sẵn", "599K"],
-                  ["📐 BONUS 2: Type Scale Calculator Template (Figma/Excel)", "399K"],
-                  ["✅ BONUS 3: Checklist 30 lỗi typography phổ biến", "199K"],
-                  ["👁 BONUS 4: Swipe File — 50 layout typography đỉnh", "299K"],
-                  ["📱 BONUS 5: Mini-Guide Typography cho Social Media", "199K"],
+                  ["🗺 BONUS 1: Bản đồ Xưởng chữ Quốc tế & Kho Trial Font", "599K"],
+                  ["📝 BONUS 2: Cheat-sheet logic tính cách Font & ví dụ thương hiệu", "399K"],
+                  ["✅ BONUS 3: Checklist Typography phổ biến", "199K"],
+                  ["🎬 BONUS 4: Kịch bản Thuyết trình Ngôn ngữ Thị giác", "299K"],
+                  ["📱 BONUS 5: Hướng dẫn Tối ưu Typography cho UI/UX", "199K"],
                 ].map(([label, val], i) => (
                   <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12, marginBottom: 10 }}>
                     <span style={{ fontSize: 13, color: "#b0b0b0", lineHeight: 1.5 }}>{label}</span>
@@ -475,11 +475,11 @@ function CheckoutContent() {
               {[
                 "Ebook PDF 400+ trang — đọc offline mọi lúc, mọi thiết bị",
                 "Video hướng dẫn chi tiết 8 module — minh họa case study thực tế",
-                "Bộ font 100+ cặp phối sẵn — áp dụng ngay vào dự án",
-                "Type Scale Calculator — tính spacing chuẩn trong 5 phút",
-                "Checklist 30 lỗi typography — review design trước khi gửi client",
-                "Swipe File 50 layout đỉnh — tham khảo có phân tích nguyên tắc",
-                "Mini-Guide Social Media — typography cho Facebook, Instagram, TikTok",
+                "Bản đồ Xưởng chữ Quốc tế & kho Trial Font thực hành",
+                "Cheat-sheet logic tính cách Font và ví dụ thương hiệu",
+                "Checklist Typography — QC design trước khi gửi khách hàng",
+                "Kịch bản Thuyết trình Ngôn ngữ Thị giác",
+                "Hướng dẫn Tối ưu Typography cho UI/UX",
               ].map((item, i) => <Ck key={i}>{item}</Ck>)}
             </Card>
 
