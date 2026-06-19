@@ -325,7 +325,12 @@ function CheckoutContent() {
 
   // Polling: detect payment automatically via SePay
   useEffect(() => {
-    const since = Date.now().toString();
+    // Persist 'since' so page refresh doesn't lose our start time
+    let since = localStorage.getItem("typo_payment_since");
+    if (!since) {
+      since = Date.now().toString();
+      localStorage.setItem("typo_payment_since", since);
+    }
     let active = true;
 
     const poll = async () => {
@@ -337,6 +342,8 @@ function CheckoutContent() {
         if (data.found && active && !paymentSuccess) {
           setPaymentSuccess(true);
           setShowModal(true);
+          // Clear the since timestamp so next visit starts fresh
+          localStorage.removeItem("typo_payment_since");
           // Write to Google Sheet
           const raw = localStorage.getItem("typo_customer");
           const customer = raw ? JSON.parse(raw) as { name?: string; phone?: string; email?: string; url?: string } : {};
@@ -360,6 +367,8 @@ function CheckoutContent() {
     };
 
     const id = setInterval(poll, 5000);
+    // Also poll immediately on mount
+    poll();
     return () => { active = false; clearInterval(id); };
   }, [paymentSuccess]);
 
