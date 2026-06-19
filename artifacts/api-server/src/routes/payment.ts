@@ -31,7 +31,7 @@ function viTimestamp() {
 router.get("/payment/bank-info", (_req, res) => {
   res.json({
     bank: process.env.SEPAY_BANK ?? "TPBank",
-    account: process.env.SEPAY_ACCOUNT ?? "00008834042",
+    account: process.env.SEPAY_ACCOUNT ?? "88804101986",
     holder: process.env.SEPAY_HOLDER ?? "NGUYEN DUC VIET",
     amount: COURSE_AMOUNT,
     content: "TYPO [HO TEN]",

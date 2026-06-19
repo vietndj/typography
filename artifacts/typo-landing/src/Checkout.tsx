@@ -320,7 +320,7 @@ function CheckoutContent() {
   const phone = customer.phone || "[SĐT CỦA BẠN]";
   const transferContent = `TYPO ${phone}`;
 
-  const BANK: BankInfo = { name: "TPBank", account: "00008834042", holder: "NGUYEN DUC VIET", amount: "249.000", content: transferContent };
+  const BANK: BankInfo = { name: "TPBank", account: "88804101986", holder: "NGUYEN DUC VIET", amount: "249.000", content: transferContent };
   const QR_URL = `https://img.vietqr.io/image/TPB-${BANK.account}-compact2.png?amount=249000&addInfo=${encodeURIComponent(transferContent)}&accountName=${encodeURIComponent(BANK.holder)}`;
 
   // Polling: detect payment automatically via SePay
