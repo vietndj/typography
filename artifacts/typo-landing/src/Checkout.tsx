@@ -138,17 +138,14 @@ function PaymentSuccessModal({ onClose }: { onClose: () => void }) {
         </p>
         <div style={{ background: "#111", border: "1px solid #1e1e1e", borderRadius: 16, padding: "20px 24px", marginBottom: 24 }}>
           <p style={{ fontSize: 13, color: "#666", marginBottom: 8 }}>📧 Vui lòng kiểm tra email để nhận:</p>
-          <p style={{ fontSize: 16, fontWeight: 800, color: GREEN, margin: "0 0 4px" }}>Lời mời vào khoá học</p>
-          <p style={{ fontSize: 13, color: "#555" }}>Email gửi trong <strong style={{ color: "#fff" }}>30 phút</strong> (giờ hành chính)</p>
+          <p style={{ fontSize: 16, fontWeight: 800, color: GREEN, margin: "0 0 4px" }}>Tài liệu được gửi qua email của bạn</p>
+          <p style={{ fontSize: 13, color: "#555" }}>Kiểm tra hộp thư (kể cả Spam) sau vài phút nhé!</p>
         </div>
         <div style={{ background: "#0d1a0d", borderRadius: 12, padding: "14px 20px", marginBottom: 24 }}>
-          {["📖 Ebook Typography Masterclass", "🎬 Video chi tiết 6 module", "🎁 5 Bonus đặc biệt", "♾ Truy cập vĩnh viễn"].map((item) => (
+          {["📖 Ebook 400+ trang Typography Masterclass", "🎬 Video chi tiết 8 module", "🎁 5 Bonus đặc biệt", "♾ Truy cập vĩnh viễn"].map((item) => (
             <div key={item} style={{ fontSize: 14, color: "#b0b0b0", padding: "4px 0", textAlign: "left" }}>{item}</div>
           ))}
         </div>
-        <p style={{ fontSize: 12, color: "#444", marginBottom: 20 }}>
-        Chưa nhận sau 30 phút? <a href="mailto:vietndj@gmail.com" style={{ color: ORANGE }}>vietndj@gmail.com</a> (Zalo: 0934.688.632)
-        </p>
         <button onClick={onClose} style={{
           background: ORANGE, color: "#fff", border: "none",
           borderRadius: 50, padding: "14px 36px",
@@ -177,7 +174,7 @@ function ConfirmBanner({ onReset }: { onReset: () => void }) {
           <span key={item} style={{ fontSize: 14, color: "#c0c0c0" }}>{item}</span>
         ))}
       </div>
-      <p style={{ fontSize: 13, color: "#555" }}>Chưa nhận email sau 30 phút? Liên hệ <a href="mailto:vietndj@gmail.com" style={{ color: ORANGE }}>vietndj@gmail.com</a> (Zalo: 0934.688.632)</p>
+      <p style={{ fontSize: 13, color: "#555" }}>Chưa nhận email sau 30 phút? Liên hệ <a href="mailto:vietndj@gmail.com" style={{ color: ORANGE }}>vietndj@gmail.com</a> &nbsp;|&nbsp; Zalo: <a href="https://zalo.me/0934688632" style={{ color: ORANGE }}>0934.688.632</a></p>
       <button onClick={onReset} style={{ marginTop: 20, background: "transparent", border: "1px solid #2a2a2a", borderRadius: 50, padding: "10px 24px", color: "#555", fontSize: 13, cursor: "pointer" }}>
         Quay lại trang thanh toán
       </button>
@@ -271,8 +268,7 @@ function PaymentPanel({ bank, qrUrl, onConfirm }: { bank: BankInfo; qrUrl: strin
         ✅ TÔI ĐÃ CHUYỂN KHOẢN
       </button>
       <p style={{ fontSize: 12, color: "#555", textAlign: "center", marginTop: 10, lineHeight: 1.6 }}>
-        Tài liệu gửi qua email trong 30 phút sau xác nhận.<br />
-        Chưa nhận? Liên hệ <a href="mailto:vietndj@gmail.com" style={{ color: ORANGE }}>vietndj@gmail.com</a> (Zalo: 0934.688.632)
+        Tài liệu gửi qua email trong vài phút sau khi xác nhận.
       </p>
 
       <div style={{ display: "flex", gap: 10, justifyContent: "center", marginTop: 18, paddingTop: 14, borderTop: "1px solid #1a1a1a", flexWrap: "wrap" }}>
