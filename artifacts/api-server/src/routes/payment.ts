@@ -170,6 +170,25 @@ router.post("/payment/confirm", async (req, res) => {
       req.log.warn({ text, status: updateRes.status }, "Google Script payment confirm returned non-JSON response");
     }
 
+    // Trigger Make.com webhook for Skool invite & Email
+    const MAKE_WEBHOOK_URL = process.env.MAKE_WEBHOOK_URL || "https://hook.us2.make.com/hvzbs56d8acpwn53ywcoiwkgw633v1pr";
+    const customerEmail = updateData.email || email; // use email from sheet or from frontend fallback
+    const customerName = updateData.name || name;
+
+    if (customerEmail && updateData.success) {
+      req.log.info({ customerEmail }, "Triggering Make.com webhook for Skool automation...");
+      fetch(MAKE_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: customerName,
+          email: customerEmail,
+          phone: phone,
+          course: "Typography Masterclass"
+        })
+      }).catch(err => req.log.error(err, "Failed to call Make webhook"));
+    }
+
     req.log.info({ phone, txId: transactionId, updateData }, "Payment confirmed — sheet updated via Google Script");
     res.json({ success: true });
   } catch (err: any) {
@@ -213,6 +232,22 @@ router.post("/sepay/webhook", async (req, res) => {
 
         const updateData = await updateRes.json();
         req.log.info({ phone: extractedPhone, updateData }, "SePay Webhook updated Google Sheet successfully");
+
+        // Trigger Make.com webhook for Skool invite & Email
+        const MAKE_WEBHOOK_URL = process.env.MAKE_WEBHOOK_URL || "https://hook.us2.make.com/hvzbs56d8acpwn53ywcoiwkgw633v1pr";
+        if (updateData.success && updateData.email) {
+          req.log.info({ email: updateData.email }, "Triggering Make.com webhook from SePay Webhook...");
+          fetch(MAKE_WEBHOOK_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name: updateData.name || "Customer",
+              email: updateData.email,
+              phone: extractedPhone,
+              course: "Typography Masterclass"
+            })
+          }).catch(err => req.log.error(err, "Failed to call Make webhook from SePay webhook"));
+        }
       } else {
         req.log.info("Could not extract phone number from SePay webhook content, or GOOGLE_SCRIPT_URL not set.");
       }
@@ -220,7 +255,7 @@ router.post("/sepay/webhook", async (req, res) => {
 
     res.json({ success: true });
   } catch (err) {
-    logger.error(err, "Error processing SePay webhook");
+    logger.error(err, "Error processing SePay Webhook");
     res.status(500).json({ error: "Failed to process webhook" });
   }
 });
