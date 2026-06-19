@@ -201,11 +201,11 @@ export default defineConfig({
     },
     proxy: {
       "/api/lead/register": {
-        target: "https://typo-landing-api.onrender.com",
+        target: "https://typography-f502.onrender.com",
         changeOrigin: true,
       },
       "/api/payment": {
-        target: "https://typo-landing-api.onrender.com",
+        target: "https://typography-f502.onrender.com",
         changeOrigin: true,
       },
     },
