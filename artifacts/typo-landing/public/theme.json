@@ -16,7 +16,7 @@
   "heroLetterSpacing": "-0.015em",
   "heroFontSize": "clamp(34px, 6.2vw, 68px)",
   "h2FontSize": "clamp(26px, 4vw, 44px)",
-  "bodyFontSize": "16px",
+  "bodyFontSize": "20px",
   "bodyLineHeight": 1.85,
   "accentGlow": true,
   "cardRadius": 16,

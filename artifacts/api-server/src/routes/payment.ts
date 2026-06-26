@@ -125,8 +125,8 @@ router.get("/payment/check", async (req, res) => {
       return;
     }
 
-    // Strip leading zeros and ALL spaces/dashes for robust comparison
-    const searchPhone = phone.replace(/^0+/, '').replace(/[\s\-]/g, '');
+    // Extract last 9 digits of the phone number for robust comparison against prefixes (+84, 84, 0, spaces etc.)
+    const searchPhone = phone.replace(/[^0-9]/g, '').slice(-9);
 
     const match = data.transactions.find((tx) => {
       const amountIn = parseFloat(tx.amount_in);
@@ -136,9 +136,9 @@ router.get("/payment/check", async (req, res) => {
       const txTimeString = tx.transaction_date.trim() + "+07:00";
       const txTime = new Date(txTimeString).getTime();
       
-      // Check if the transaction content contains the phone number
-      const content = (tx.transaction_content || "").toLowerCase().replace(/[\s\-]/g, '');
-      const hasPhone = content.includes(searchPhone);
+      // Check if the transaction content contains the 9-digit phone suffix
+      const content = (tx.transaction_content || "").toLowerCase().replace(/[^0-9]/g, '');
+      const hasPhone = searchPhone && content.includes(searchPhone);
       
       return amountIn === COURSE_AMOUNT && txTime >= sinceMs && hasPhone;
     });
@@ -238,13 +238,29 @@ router.post("/sepay/webhook", async (req, res) => {
 
     // Only process if it's an incoming payment of the exact amount
     if (amountIn === COURSE_AMOUNT) {
-      // Remove all spaces and dashes from content so the regex matches contiguous digits
-      const normalizedContent = content.replace(/[\s\-]/g, '');
+      // Normalize transaction content to only digits for robust matching
+      const normalizedContent = content.replace(/[^0-9]/g, '');
       
-      // Try to extract phone number from transfer content
-      // Strict regex for Vietnamese phone numbers (10 digits starting with 03, 05, 07, 08, 09)
-      const phoneMatch = normalizedContent.match(/0[35789][0-9]{8}/);
-      const extractedPhone = phoneMatch ? phoneMatch[0] : null;
+      let extractedPhone: string | null = null;
+      
+      // 1. Search in customerCache using the last 9 digits (highly robust)
+      for (const cachedPhone of customerCache.keys()) {
+        const last9 = cachedPhone.replace(/[^0-9]/g, '').slice(-9);
+        if (last9 && normalizedContent.includes(last9)) {
+          extractedPhone = cachedPhone;
+          req.log.info({ extractedPhone, cachedPhone }, "Phone matched from customer cache via 9-digit suffix");
+          break;
+        }
+      }
+
+      // 2. Fallback: match any 9-digit or 10-digit number starting with Vietnamese phone prefixes
+      if (!extractedPhone) {
+        const phoneMatch = normalizedContent.match(/(?:0?[35789][0-9]{8})/);
+        if (phoneMatch) {
+          extractedPhone = phoneMatch[0].startsWith('0') ? phoneMatch[0] : '0' + phoneMatch[0];
+          req.log.info({ extractedPhone }, "Phone extracted via fallback regex match");
+        }
+      }
 
       if (extractedPhone && GOOGLE_SCRIPT_URL) {
         req.log.info(`Extracted phone ${extractedPhone} from SePay webhook content. Updating Google Sheet...`);

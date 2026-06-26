@@ -170,7 +170,7 @@ function Check({ children, icon = "›", color: colorProp }: { children: React.R
   return (
     <div style={{ display: "flex", gap: 12, alignItems: "flex-start", marginBottom: 14 }}>
       <span style={{ color, fontWeight: 700, flexShrink: 0, marginTop: 1, fontFamily: t.fontMono }}>{icon}</span>
-      <span style={{ fontSize: 15, lineHeight: 1.7, color: t.textBody ?? "#bdbdbd" }}>{children}</span>
+      <span style={{ fontSize: t.bodyFontSize || "17px", lineHeight: 1.7, color: t.textBody ?? "#bdbdbd" }}>{children}</span>
     </div>
   );
 }
@@ -558,14 +558,14 @@ export default function App() {
           }}>
             {c.heroAccentLine}
           </p>
-          <p style={{ fontSize: "clamp(14px, 1.6vw, 17px)", lineHeight: 1.75, color: t.textMuted ?? "#888", maxWidth: 640, margin: "0 auto 36px" }}>
+          <p style={{ fontSize: "clamp(16px, 1.8vw, 19px)", lineHeight: 1.75, color: t.textMuted ?? "#888", maxWidth: 640, margin: "0 auto 36px" }}>
             {c.heroSub}
           </p>
           <CtaButton label={`${c.heroCta} — ${c.price} VNĐ`} />
-          <p style={{ fontSize: 15, color: t.textMuted ?? "#888", marginTop: 14, fontStyle: "italic" }}>
+          <p style={{ fontSize: 16, color: t.textMuted ?? "#888", marginTop: 14, fontStyle: "italic" }}>
             (Nhận ngay quyền truy cập trọn đời)
           </p>
-          <p style={{ fontSize: 15, color: t.textMuted ?? "#777", marginTop: 6 }}>
+          <p style={{ fontSize: 16, color: t.textMuted ?? "#777", marginTop: 6 }}>
             {c.heroSubPrice ?? `Giá gốc: ${c.value} VNĐ — Tiết kiệm 80% hôm nay`}
           </p>
         </div>
@@ -583,10 +583,10 @@ export default function App() {
                 <div style={{ flexShrink: 0 }}><IconBook accent={t.accent} /></div>
                 <span style={{ fontFamily: MONO, fontSize: 11, color: t.accent, letterSpacing: "0.15em", textTransform: "uppercase" }}>Ebook PDF</span>
               </div>
-              <p style={{ fontWeight: 700, fontSize: 18, lineHeight: 1.45, color: t.textBase ?? "#f0f0f0", marginBottom: 8 }}>
+              <h3 style={{ fontFamily: t.fontDisplay, fontWeight: 700, fontSize: 24, lineHeight: 1.35, color: t.textBase ?? "#f0f0f0", marginBottom: 12 }}>
                 Ấn phẩm kỹ thuật số dày hơn 500 trang
-              </p>
-              <p style={{ fontSize: 15, lineHeight: 1.7, color: t.textBody ?? "#b0b0b0" }}>
+              </h3>
+              <p style={{ fontSize: t.bodyFontSize || "17px", lineHeight: 1.7, color: t.textBody ?? "#b0b0b0" }}>
                 Được dàn trang với tiêu chuẩn khắt khe nhất về hệ thống lưới (Grid). Bóc tách trọn vẹn đặc tính của 4 dòng font huyết mạch và phân tích Case Study. Đọc mượt mà trên mọi thiết bị.
               </p>
             </div>
@@ -600,10 +600,10 @@ export default function App() {
                 <div style={{ flexShrink: 0 }}><IconVideo accent={t.accent} /></div>
                 <span style={{ fontFamily: MONO, fontSize: 11, color: t.accent, letterSpacing: "0.15em", textTransform: "uppercase" }}>Video Course</span>
               </div>
-              <p style={{ fontWeight: 700, fontSize: 18, lineHeight: 1.45, color: t.textBase ?? "#f0f0f0", marginBottom: 8 }}>
+              <h3 style={{ fontFamily: t.fontDisplay, fontWeight: 700, fontSize: 24, lineHeight: 1.35, color: t.textBase ?? "#f0f0f0", marginBottom: 12 }}>
                 Truy cập 80+ Video phân loại chặt chẽ
-              </p>
-              <p style={{ fontSize: 15, lineHeight: 1.7, color: t.textBody ?? "#b0b0b0" }}>
+              </h3>
+              <p style={{ fontSize: t.bodyFontSize || "17px", lineHeight: 1.7, color: t.textBody ?? "#b0b0b0" }}>
                 Hệ thống hóa trên nền tảng Skool chuyên nghiệp. Từng video là một "ca phẫu thuật" chữ viết. Xem lại mọi lúc, tra cứu thao tác mọi nơi để áp dụng ngay lập tức vào dự án đang thực hiện. Mua 1 lần, sở hữu công cụ làm nghề trọn đời.
               </p>
             </div>
@@ -631,14 +631,14 @@ export default function App() {
             fontFamily: t.blockquoteFontFamily ?? t.fontAccent,
             fontStyle: t.blockquoteFontStyle ?? "italic",
             fontWeight: t.blockquoteFontWeight ?? 400,
-            fontSize: t.blockquoteFontSize ?? "clamp(17px, 2.2vw, 22px)",
+            fontSize: t.blockquoteFontSize ?? "clamp(22px, 3vw, 28px)",
             color: t.textBody ?? "#d0d0d0", lineHeight: 1.7,
           }}>
             {c.painBlockquote}
           </blockquote>
         </FadeIn>
         <FadeIn delay={140}>
-          <p style={{ fontSize: 16, lineHeight: 1.85, color: t.textBody ?? "#b0b0b0", marginBottom: 28 }}>
+          <p style={{ fontSize: t.bodyFontSize || "17px", lineHeight: 1.85, color: t.textBody ?? "#b0b0b0", marginBottom: 28 }}>
             {c.painPara}
           </p>
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
@@ -648,7 +648,7 @@ export default function App() {
         {c.painConclusion && (
           <FadeIn delay={220}>
             <div style={{ marginTop: 32, background: `${t.danger}0d`, border: `1px solid ${t.danger}22`, borderRadius: t.cardRadius, padding: "20px 24px" }}>
-              <p style={{ fontSize: 15, lineHeight: 1.75, color: t.textBody ?? "#b0b0b0", fontStyle: "italic" }}>
+              <p style={{ fontSize: `calc(${t.bodyFontSize || "17px"} + 1px)`, lineHeight: 1.75, color: t.textBody ?? "#b0b0b0", fontStyle: "italic" }}>
                 {c.painConclusion}
               </p>
             </div>
@@ -691,7 +691,7 @@ export default function App() {
             {/* Bio col */}
             <div style={{ flex: 1, minWidth: 260 }}>
               {c.instructorBio.map((bio, i) => (
-                <p key={i} style={{ fontSize: 16, lineHeight: 1.85, color: t.textBody ?? "#b0b0b0", marginBottom: 20 }}>
+                <p key={i} style={{ fontSize: t.bodyFontSize || "17px", lineHeight: 1.85, color: t.textBody ?? "#b0b0b0", marginBottom: 20 }}>
                   {bio}
                 </p>
               ))}
@@ -703,7 +703,7 @@ export default function App() {
             <div style={{ marginTop: 36, background: `linear-gradient(135deg, ${t.accent}12, ${t.card})`, border: `1px solid ${t.accent}44`, borderRadius: t.cardRadius, padding: "26px 30px", display: "flex", gap: 16, alignItems: "flex-start" }}>
               <span style={{ color: t.accent, fontSize: 28, lineHeight: 1, flexShrink: 0, marginTop: 2, opacity: 0.7 }}>"</span>
               <p style={{
-                fontSize: 17, lineHeight: 1.85,
+                fontSize: `calc(${t.bodyFontSize || "17px"} + 1px)`, lineHeight: 1.85,
                 color: t.textBase ?? "#e8e8e8",
                 fontFamily: t.fontBody,
                 fontStyle: "normal",
@@ -730,7 +730,7 @@ export default function App() {
             <Label>{c.productsLabel ?? "Sản phẩm chi tiết"}</Label>
             <SH><NL str={c.productsHeading ?? "Trải nghiệm đào tạo kép:\nTypography Masterclass"} /></SH>
             {c.productsSub && (
-              <p style={{ fontSize: 17, color: t.textMuted ?? "#888", maxWidth: 600, margin: "0 auto", lineHeight: 1.7 }}>
+              <p style={{ fontSize: `calc(${t.bodyFontSize || "17px"} + 1px)`, color: t.textMuted ?? "#888", maxWidth: 600, margin: "0 auto", lineHeight: 1.7 }}>
                 {c.productsSub}
               </p>
             )}
@@ -745,8 +745,8 @@ export default function App() {
               }}>
                 <div style={{ padding: "36px 30px 24px" }}>
                   <div style={{ marginBottom: 18 }}>{i === 0 ? <IconBook accent={t.accent} /> : <IconVideo accent={t.accent} />}</div>
-                  <h3 style={{ fontFamily: t.fontDisplay, fontSize: 22, fontWeight: 700, marginBottom: 16, lineHeight: 1.3 }}>{p.title}</h3>
-                  <p style={{ fontSize: 16, color: t.textBody ?? "#b0b0b0", lineHeight: 1.75 }}>{p.desc}</p>
+                  <h3 style={{ fontFamily: t.fontDisplay, fontSize: 27, fontWeight: 700, marginBottom: 16, lineHeight: 1.3 }}>{p.title}</h3>
+                  <p style={{ fontSize: t.bodyFontSize || "17px", color: t.textBody ?? "#b0b0b0", lineHeight: 1.75 }}>{p.desc}</p>
                 </div>
                 {i === 0 && c.productsEbookEmbed && (
                   <div style={{ borderTop: `1px solid ${t.line}`, background: "#080808" }}>
@@ -765,7 +765,7 @@ export default function App() {
         <div style={{ textAlign: "center" }}>
           <FadeIn delay={140}>
             <CtaButton label={`${c.midCta} — ${c.price} VNĐ`} />
-            <p style={{ fontSize: 16, color: t.textMuted ?? "#888", marginTop: 12, fontStyle: "italic" }}>
+            <p style={{ fontSize: 17, color: t.textMuted ?? "#888", marginTop: 12, fontStyle: "italic" }}>
               Thanh toán 1 lần — Truy cập trọn đời
             </p>
           </FadeIn>
@@ -798,10 +798,10 @@ export default function App() {
                   <div style={{ marginBottom: 18 }}>
                     <SkillIcon idx={i} accent={t.accent} />
                   </div>
-                  <h3 style={{ fontWeight: 700, fontSize: 18, lineHeight: 1.35, marginBottom: 12, color: t.textBase ?? "#f0f0f0" }}>{s.title}</h3>
-                  <p style={{ fontSize: 15, lineHeight: 1.7, color: t.textBody ?? "#b0b0b0", marginBottom: 16 }}>{s.desc}</p>
+                  <h3 style={{ fontFamily: t.fontDisplay, fontWeight: 700, fontSize: 23, lineHeight: 1.35, marginBottom: 12, color: t.textBase ?? "#f0f0f0" }}>{s.title}</h3>
+                  <p style={{ fontSize: `calc(${t.bodyFontSize || "17px"} - 1px)`, lineHeight: 1.7, color: t.textBody ?? "#b0b0b0", marginBottom: 16 }}>{s.desc}</p>
                   <div style={{ borderTop: `1px solid ${t.line}`, paddingTop: 14 }}>
-                    <p style={{ fontSize: 12, color: t.danger, lineHeight: 1.55 }}>⚠ {s.warn}</p>
+                    <p style={{ fontSize: `calc(${t.bodyFontSize || "17px"} - 3px)`, color: t.danger, lineHeight: 1.55, fontStyle: "italic" }}>⚠ {s.warn}</p>
                   </div>
                 </div>
                 {/* Per-card GIF slot */}
@@ -871,7 +871,7 @@ export default function App() {
 
         {/* Chapter grid */}
         <FadeIn delay={160}>
-          <p style={{ fontSize: 17, fontWeight: 700, textAlign: "center", color: t.textBase ?? "#f0f0f0", marginBottom: 28 }}>
+          <p style={{ fontSize: 18, fontWeight: 700, textAlign: "center", color: t.textBase ?? "#f0f0f0", marginBottom: 28 }}>
             {c.roadmapChaptersHeading ?? "Hệ thống hóa toàn bộ tư duy thiết kế của bạn:"}
           </p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 16 }}>
@@ -885,8 +885,8 @@ export default function App() {
                     <span style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: t.accent, letterSpacing: "0.12em", background: `${t.accent}18`, padding: "3px 10px", borderRadius: 100 }}>{m.n}</span>
                     <span style={{ fontSize: 12, color: t.textMuted ?? "#666", fontFamily: MONO }}>{m.sub}</span>
                   </div>
-                  <h3 style={{ fontWeight: 700, fontSize: 17, marginBottom: 10, color: t.textBase ?? "#f0f0f0" }}>{m.title}</h3>
-                  <p style={{ fontSize: 14, color: t.textBody ?? "#b0b0b0", lineHeight: 1.7 }}>{m.desc}</p>
+                  <h3 style={{ fontFamily: t.fontDisplay, fontWeight: 700, fontSize: 21, marginBottom: 10, color: t.textBase ?? "#f0f0f0" }}>{m.title}</h3>
+                  <p style={{ fontSize: 15.5, color: t.textBody ?? "#b0b0b0", lineHeight: 1.7 }}>{m.desc}</p>
                 </div>
                 {m.gif && (
                   <div style={{ borderTop: `1px solid ${t.line}` }}>
@@ -917,7 +917,7 @@ export default function App() {
           <div style={{ textAlign: "center", marginBottom: 48 }}>
             <Label>{c.bonusesLabel}</Label>
             <SH><NL str={c.bonusesHeading} /></SH>
-            <p style={{ fontSize: 15, color: t.textMuted ?? "#888", marginTop: -8 }}>{c.bonusesSub}</p>
+            <p style={{ fontSize: 16, color: t.textMuted ?? "#888", marginTop: -8 }}>{c.bonusesSub}</p>
           </div>
         </FadeIn>
         <FadeIn delay={100}>
@@ -938,8 +938,8 @@ export default function App() {
                   <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 8, flexWrap: "wrap" }}>
                     <span style={{ fontFamily: MONO, fontSize: 10, color: t.accent, letterSpacing: "0.15em" }}>BONUS {String(i + 1).padStart(2, "0")}</span>
                   </div>
-                  <div style={{ fontWeight: 700, fontSize: 17, marginBottom: 8, color: t.textBase ?? "#f0f0f0", lineHeight: 1.35 }}>{b.title}</div>
-                  <div style={{ fontSize: 15, color: t.textBody ?? "#b0b0b0", lineHeight: 1.65 }}>{b.desc}</div>
+                  <h3 style={{ fontFamily: t.fontDisplay, fontWeight: 700, fontSize: 21, marginBottom: 8, color: t.textBase ?? "#f0f0f0", lineHeight: 1.35 }}>{b.title}</h3>
+                  <div style={{ fontSize: 16.5, color: t.textBody ?? "#b0b0b0", lineHeight: 1.65 }}>{b.desc}</div>
                   {b.image && (
                     <div style={{ marginTop: 20, borderRadius: 12, overflow: "hidden", border: `1px solid ${t.line}` }}>
                       <img src={b.image} alt={b.title} style={{ width: "100%", display: "block" }} />
@@ -966,7 +966,7 @@ export default function App() {
         <div style={{ textAlign: "center", marginTop: 44 }}>
           <FadeIn delay={150}>
             <CtaButton label={c.bonusesCta} />
-            <p style={{ fontSize: 16, color: t.textMuted ?? "#888", marginTop: 12, fontStyle: "italic" }}>
+            <p style={{ fontSize: 17, color: t.textMuted ?? "#888", marginTop: 12, fontStyle: "italic" }}>
               Thanh toán 1 lần — Truy cập trọn đời
             </p>
           </FadeIn>
@@ -984,7 +984,7 @@ export default function App() {
           <div style={{ textAlign: "center", marginBottom: 48 }}>
             <Label>{c.baLabel}</Label>
             <SH>{c.baHeading}</SH>
-            {c.baSub && <p style={{ fontSize: 16, color: t.textMuted ?? "#888", maxWidth: 560, margin: "0 auto", lineHeight: 1.7 }}>{c.baSub}</p>}
+            {c.baSub && <p style={{ fontSize: 17, color: t.textMuted ?? "#888", maxWidth: 560, margin: "0 auto", lineHeight: 1.7 }}>{c.baSub}</p>}
           </div>
         </FadeIn>
         <FadeIn delay={100}>
@@ -996,7 +996,7 @@ export default function App() {
               {c.beforeItems.map((item, i) => (
                 <div key={i} style={{ display: "flex", gap: 12, marginBottom: 16, alignItems: "flex-start" }}>
                   <span style={{ color: t.danger, fontWeight: 700, flexShrink: 0, fontFamily: MONO, marginTop: 1 }}>—</span>
-                  <span style={{ fontSize: 14.5, lineHeight: 1.65, color: t.textBody ?? "#b0b0b0" }}>{item}</span>
+                  <span style={{ fontSize: 16, lineHeight: 1.65, color: t.textBody ?? "#b0b0b0" }}>{item}</span>
                 </div>
               ))}
             </div>
@@ -1007,7 +1007,7 @@ export default function App() {
               {c.afterItems.map((item, i) => (
                 <div key={i} style={{ display: "flex", gap: 12, marginBottom: 16, alignItems: "flex-start" }}>
                   <span style={{ color: t.accent, fontWeight: 700, flexShrink: 0, fontFamily: MONO, marginTop: 1 }}>✓</span>
-                  <span style={{ fontSize: 14.5, lineHeight: 1.65, color: t.textBody ?? "#b0b0b0" }}>{item}</span>
+                  <span style={{ fontSize: 16, lineHeight: 1.65, color: t.textBody ?? "#b0b0b0" }}>{item}</span>
                 </div>
               ))}
             </div>
@@ -1061,7 +1061,7 @@ export default function App() {
                 <div style={{ display: "flex", justifyContent: "center", marginBottom: 10 }}>
                   <IconGuarantee accent={t.accent} />
                 </div>
-                <p style={{ fontSize: 15, color: t.textBody ?? "#cfcfcf", lineHeight: 1.7, maxWidth: 520, margin: "0 auto", fontStyle: "italic" }}>
+                <p style={{ fontSize: 17.5, color: t.textBody ?? "#cfcfcf", lineHeight: 1.7, maxWidth: 520, margin: "0 auto", fontStyle: "italic" }}>
                   {c.guarantee}
                 </p>
               </div>
