@@ -630,9 +630,10 @@ export default function App() {
             borderLeft: `3px solid ${t.accent}`, paddingLeft: 24, margin: "0 0 36px",
             fontFamily: t.blockquoteFontFamily ?? t.fontAccent,
             fontStyle: t.blockquoteFontStyle ?? "italic",
-            fontWeight: t.blockquoteFontWeight ?? 400,
+            fontWeight: t.blockquoteFontWeight ?? 500,
             fontSize: t.blockquoteFontSize ?? "clamp(22px, 3vw, 28px)",
-            color: t.textBody ?? "#d0d0d0", lineHeight: 1.7,
+            color: t.textBase ?? "#f3f4f6", lineHeight: 1.8,
+            letterSpacing: "0.01em",
           }}>
             {c.painBlockquote}
           </blockquote>
