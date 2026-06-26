@@ -4,7 +4,7 @@ import { useContent } from "./content";
 
 // ─── Font stacks (theme-driven via t.fontDisplay etc.) ───
 const NOE = "'Noe Display', Georgia, serif";
-const SECTRA = "'GT Sectra', Georgia, serif";
+const SECTRA = "'SVN-Acta', Georgia, serif";
 const AEONIK = "'Aeonik', 'Inter', sans-serif";
 const MONO = "'JetBrains Mono', 'SFMono-Regular', Consolas, monospace";
 

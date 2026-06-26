@@ -65,7 +65,7 @@ const FONTS = {
   display: "'Noe Display', Georgia, serif",
   body: "'Aeonik', 'Inter', sans-serif",
   mono: "'JetBrains Mono', 'SFMono-Regular', Consolas, monospace",
-  accent: "'GT Sectra', Georgia, serif",
+  accent: "'SVN-Acta', Georgia, serif",
 };
 
 const BTN_DEFAULTS = {
