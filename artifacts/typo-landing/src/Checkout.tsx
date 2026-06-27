@@ -298,7 +298,7 @@ function GuaranteeBox() {
     <div style={{ background: "#0a150a", border: "1px solid #27ae6033", borderRadius: 14, padding: "16px 18px" }}>
       <p style={{ fontSize: 14, fontWeight: 700, color: GREEN, marginBottom: 8 }}>💰 Cam kết hoàn tiền 100% — 24 giờ</p>
       <p style={{ fontSize: 13, color: "#666", lineHeight: 1.65, margin: 0 }}>
-        Nếu bạn không hài lòng vì bất kỳ lý do gì, chúng tôi hoàn tiền 100% đầy đủ trong 24 giờ. Không hỏi lý do. Liên hệ: <a href="mailto:vietndj@gmail.com" style={{ color: ORANGE }}>vietndj@gmail.com</a> (Zalo: 0934.688.632)
+        Nếu bạn không hài lòng vì bất kỳ lý do gì, chúng tôi hoàn tiền 100% đầy đủ trong 24 giờ. Liên hệ: <a href="mailto:vietndj@gmail.com" style={{ color: ORANGE }}>vietndj@gmail.com</a> (Zalo: 0934.688.632)
       </p>
     </div>
   );
